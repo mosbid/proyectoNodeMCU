@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAC-0</title>
+
+<!-- Bootstrap -->
+<link href="../../css/bootstrap.css" rel="stylesheet">
+<link href="../../css/paco-1.css" rel="stylesheet">
+<script type="text/javascript"> 
+
+</script>
+<style type="text/css">
+</style>
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid"> 
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+      <a class="navbar-brand" id="dirUser"></a></div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+<script>
+var obj, dbParam, xmlhttp, myObj, x, txt = "";
+obj = { "direccion":"dir"};
+dbParam = JSON.stringify(obj);
+xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        myObj = this.responseText;   
+        document.getElementById("dirUser").innerHTML = myObj;
+    }
+};
+xmlhttp.open("GET", "http://localhost:8083/api/mostrarDir/", true);
+xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xmlhttp.send("x=" + dbParam);
+
+</script>
+    <div class="collapse navbar-collapse" id="defaultNavbar1">
+      <form name="form4" method="post" class="navbar-form navbar-left" action="/pagina/cambiarDireccion/">
+        <div class="form-group">
+          <input id="dirNueva" name="nuevaDir" type="text" class="form-control" placeholder="Pon nueva dirección">
+        </div>
+        <button type="submit" class="btn btn-default">Cambiar dirección</button>
+      </form>
+    </div>
+    <!-- /.navbar-collapse --> 
+  </div>
+  <!-- /.container-fluid --> 
+</nav>
+<div></div>
+<div class="row">
+  <div class="col-sm-4 text-center">
+      <input name="abrir" type="button" class="btn btn-info" id="ab" value="Abrir puerta" onClick=$.get("http://localhost:8083/api/doorOpen/") >
+    </div >
+	<div class="col-sm-4 text-center">
+	<input name="bl" type="button" class="btn btn-info" id="bl2" value="Bloquear" onClick=$.get("http://localhost:8083/api/doorBlock/")>
+  </div>
+	<div class="col-sm-4 text-center">
+		<input name="desbloq" type="button" class="btn btn-info" id="de" value="Desbloquear" onClick=$.get("http://localhost:8083/api/doorUnlock/")>
+	</div>
+</div>
+    
+<div class="col-md-12 col-sm-12">&nbsp;</div>
+<div class="row">
+  <div class="col-sm-4 text-center col-sm-offset-2">
+		<form method="post" name="form2" class="col-sm-offset-1 col-sm-11" id="fo2" action="/api/newNormalPass/">
+  <span id="addon2" class="input-group-addon">Contraseña nueva</span>
+  <input minlength="4" maxlength="4" maxwidth="20" id="contraNueva" name="nuevaContra" type="text" class="form-control" aria-describedby="addon1" placeholder="Sólo números y letras A, B, C y D" required>
+  <input name="submit" type="submit" class="btn btn-info" id="submit" value="Cambiar">
+</form>
+		<form class="col-sm-11">
+		  &nbsp;
+    </form>
+	</div>
+  <div class="col-sm-4 text-center">
+		<form method="post" name="form3" class="col-sm-offset-1 col-sm-11" id="fo3" action="/api/newMasterPass/">
+  <span id="addon1" class="input-group-addon">Contraseña de Administración nueva</span>
+  <input minlength="8" maxlength="8" id="maestraNueva" name="nuevaMaestra" type="text" class="form-control" aria-describedby="addon1" placeholder="Sólo números y letras A, B, C y D" required>
+  <input name="cambiar2" type="submit" class="btn btn-info" id="ca2" value="Cambiar">
+</form>
+	</div>
+</div>
+	<div class="row">
+		<div class="col-lm">
+	<p id="demo"></p>
+		</div>
+	</div>
+<script>
+var obj, dbParam, xmlhttp, myObj, x, bloq, acierto, txt = "";
+obj = { "table":"terminal", "limit":100 };
+dbParam = JSON.stringify(obj);
+xmlhttp = new XMLHttpRequest();
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        myObj = JSON.parse(this.responseText);
+        txt += "<table>"
+		txt += "<tr><th>Acierto</th><th>Fecha</th><th>Bloqueo</th><th>Num Intento</th></tr>"
+        for (x in myObj) {
+			if (myObj[x].bloqueo == 1){bloq = "Sí"}else{bloq = "No"};
+			if (myObj[x].acierto == 1){acierto = "Sí"}else{acierto = "No"};
+            txt += "<tr><td>" + acierto + "</td><td>" + myObj[x].fecha.substring(0, 19) + "</td><td>" + bloq + "</td><td>" + myObj[x].numIntento + "</td></tr>";
+        }
+        txt += "</table>"        
+        document.getElementById("demo").innerHTML = txt;
+    }
+};
+xmlhttp.open("GET", "http://localhost:8083/api/terminal/", true);
+xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xmlhttp.send("x=" + dbParam);
+
+</script>
+
+<div class="row">
+    <div class="text-center col-md-6 col-md-offset-3">
+<p>Copyright &copy; 2018 &middot; All Rights Reserved &middot; PACO</p>
+    </div>
+  </div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+<script src="../../js/jquery-1.11.3.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="../../js/bootstrap.js"></script>
+<script src="../../js/gestion.js"></script>
+</body>
+</html>
